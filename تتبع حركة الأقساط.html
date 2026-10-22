@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تتبع حركة الأقساط</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f4ef;--card:#fff;--tx:#1d2320;--mu:#6b736e;--ac:#0f6b4f;--ac2:#b7791f;--bd:#e3dfd5;--red:#c62828;--redbg:#fdecea;--ok:#e7f4ee}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#141816;--card:#1d2320;--tx:#ecefed;--mu:#9aa39e;--ac:#4cc79a;--ac2:#e0a94a;--bd:#2c3430;--red:#ff6b6b;--redbg:#3a1d1d;--ok:#1b2e26}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#141816;--card:#1d2320;--tx:#ecefed;--mu:#9aa39e;--ac:#4cc79a;--ac2:#e0a94a;--bd:#2c3430;--red:#ff6b6b;--redbg:#3a1d1d;--ok:#1b2e26}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic",Arial,sans-serif;line-height:1.6}
+.w{max-width:980px;margin:auto;padding:16px}
+h1{font-size:22px;margin:4px 0 2px}.sub{color:var(--mu);font-size:13px;margin-bottom:14px}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px}
+.tabs button{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 14px;border-radius:20px;font:inherit;cursor:pointer}
+.tabs button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-bottom:12px}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px}
+.c .l{color:var(--mu);font-size:12px}.c .v{font-size:22px;font-weight:700;margin-top:2px}.c .s{font-size:12px;color:var(--mu)}
+.bar{height:10px;background:var(--bd);border-radius:6px;overflow:hidden;margin:8px 0 4px}.bar i{display:block;height:100%;background:var(--ac)}
+.bar.j i{background:var(--ac2)}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--bd);border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:13.5px}
+th,td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--bd);white-space:nowrap}
+th{color:var(--mu);font-weight:600;font-size:12px;background:var(--bg)}
+tr.ev td{background:var(--redbg)}
+tr.nx td{background:var(--ok);font-weight:600}
+.chip{display:block;width:max-content;background:var(--red);color:#fff;border-radius:10px;padding:1px 8px;font-size:11.5px;margin:2px 0}
+.st{font-size:12px;border-radius:10px;padding:1px 8px;background:var(--bd)}
+.st.p{background:var(--ac);color:#fff}
+.set{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+label{display:block;font-size:12.5px;color:var(--mu)}
+input{width:100%;padding:9px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit;margin-top:3px}
+button.b{margin-top:12px;padding:9px 16px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;cursor:pointer}
+.note{font-size:12.5px;color:var(--mu);margin-top:10px}
+.legend{margin:8px 0;font-size:12.5px}
+.sec{display:none}.sec.on{display:block}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>تتبع حركة الأقساط</h1>
+<div class="sub" id="who">دورة حياة السلفة وجمعية المخزن · الخصم يوم 20 من كل شهر</div>
+<div class="tabs" id="tabs"></div>
+
+<div class="sec" id="s0"><div class="grid" id="hero"></div><div id="ovnote"></div></div>
+<div class="sec" id="s1"><div class="grid" id="lhero"></div><div class="tw"><table id="lt"></table></div></div>
+<div class="sec" id="s2"><div class="grid" id="jhero"></div><div class="tw"><table id="jt"></table></div></div>
+<div class="sec" id="s3"><div class="legend"><span class="chip">حدث</span> الأشهر المظلّلة بالأحمر فيها عيد أو رمضان أو مناسبة، فجهّز نفسك لمصاريف إضافية.</div><div class="tw"><table id="ct"></table></div><div class="note">مواعيد الأعياد الهجرية تقريبية (±يوم حسب رؤية الهلال).</div></div>
+<div class="sec" id="s4">
+ <div class="set" id="set"></div>
+ <button class="b" onclick="resetAll()">استعادة القيم الأصلية</button>
+ <div class="note">تُحفظ تعديلاتك تلقائيًا في هذا المتصفح. الدفعة الإضافية تُضاف لقسط السلفة كل شهر وتُظهر كم شهرًا توفّر.</div>
+</div>
+</div>
+<div class="w" style="padding-top:0"><div class="note" style="text-align:center">تم تصميم المنظومة من قبل عبدالله مليطان</div></div>
+<script>
+setInterval(function(){render();},3600000);
+var DEF={lp:15655,lm:800,ls:"2026-10-20",jt:2400,jm:400,js:"2026-11-20",ex:0};
+var S=Object.assign({},DEF);
+try{var r=localStorage.getItem("salafa_v1");if(r)S=Object.assign({},DEF,JSON.parse(r));}catch(e){}
+function save(){try{localStorage.setItem("salafa_v1",JSON.stringify(S));}catch(e){}}
+var EV={"2026-10":["عيد التحرير 23/10"],"2026-12":["عيد الاستقلال 24/12"],
+"2027-2":["ذكرى 17 فبراير","بداية رمضان ~8/2"],"2027-3":["رمضان حتى ~8/3","عيد الفطر ~9/3"],
+"2027-5":["عيد الأضحى ~16/5"],"2027-6":["رأس السنة الهجرية ~6/6"],"2027-8":["المولد النبوي ~15/8"],
+"2027-10":["عيد التحرير 23/10"],"2027-12":["عيد الاستقلال 24/12"],
+"2028-1":["بداية رمضان ~28/1"],"2028-2":["رمضان","عيد الفطر ~26/2","ذكرى 17 فبراير"],
+"2028-5":["عيد الأضحى ~5/5","رأس السنة الهجرية ~25/5"]};
+var EV={"2026-10":[["عيد التحرير",23]],"2026-12":[["عيد الاستقلال",24]],"2027-2":[["بداية رمضان",8,1],["ذكرى ثورة 17 فبراير",17]],"2027-3":[["نهاية رمضان",8,1],["عيد الفطر",9,1]],"2027-5":[["عيد الأضحى",16,1]],"2027-6":[["رأس السنة الهجرية",6,1]],"2027-8":[["المولد النبوي",15,1]],"2027-10":[["عيد التحرير",23]],"2027-12":[["عيد الاستقلال",24]],"2028-1":[["بداية رمضان",28,1]],"2028-2":[["ذكرى ثورة 17 فبراير",17],["نهاية رمضان",25,1],["عيد الفطر",26,1]],"2028-5":[["عيد الأضحى",5,1],["رأس السنة الهجرية",25,1]]};
+var MN=["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+var WD=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+function n(x){return Math.round(x).toLocaleString("en-US");}
+function key(y,m){return y+"-"+(m+1);}
+function ds(d){return d.getDate()+" "+MN[d.getMonth()]+" "+d.getFullYear();}
+function sched(total,pm,start,extra){var a=[],rem=total,d=new Date(start+"T00:00:00"),y=d.getFullYear(),m=d.getMonth(),day=d.getDate();
+ pm=pm+(extra||0);if(pm<=0)return a;
+ while(rem>0.001&&a.length<600){var p=Math.min(pm,rem);rem-=p;a.push({y:y,m:m,d:new Date(y,m,day),pay:p,rem:rem});m++;if(m>11){m=0;y++;}}return a;}
+function evs(y,m){return (EV[key(y,m)]||[]).map(function(t){var d=new Date(y,m,t[1]);return '<span class="chip">'+t[0]+' · '+(t[2]?'~':'')+t[1]+' '+MN[m]+' ('+WD[d.getDay()]+')</span>';}).join("");}
+var TODAY=new Date();TODAY.setHours(23,59,59);
+function paid(x){return x.d<=TODAY;}
+function card(l,v,s){return '<div class="c"><div class="l">'+l+'</div><div class="v">'+v+'</div><div class="s">'+(s||"")+'</div></div>';}
+function prog(a,total,cls){var pd=0;a.forEach(function(x){if(paid(x))pd+=x.pay;});var pc=Math.min(100,pd/total*100);
+ return {pd:pd,pc:pc,html:'<div class="c" style="grid-column:1/-1"><div class="l">نسبة السداد</div><div class="v">'+pc.toFixed(1)+'%</div><div class="bar '+cls+'"><i style="width:'+pc+'%"></i></div><div class="s">سُدّد '+n(pd)+' من '+n(total)+' د.ل</div></div>'};}
+function rowsLoan(a,total,withBal){}
+function render(){
+ TODAY=new Date();TODAY.setHours(23,59,59);
+ var L=sched(S.lp,S.lm,S.ls,S.ex),L0=sched(S.lp,S.lm,S.ls,0),J=sched(S.jt,S.jm,S.js,0);
+ var lp=prog(L,S.lp,""),jp=prog(J,S.jt,"j");
+ var lE=L[L.length-1],jE=J[J.length-1],saved=L0.length-L.length;
+ var nxL=L.find(function(x){return !paid(x);}),nxJ=J.find(function(x){return !paid(x);});
+ var lc=L.filter(paid).length;
+ // نظرة عامة
+ document.getElementById("hero").innerHTML=
+  card("اكتمال السلفة",lE?WD[lE.d.getDay()]+" "+ds(lE.d):"—",L.length+" قسطًا · آخر قسط "+n(lE?lE.pay:0)+" د.ل")+
+  card("اكتمال جمعية المخزن",jE?WD[jE.d.getDay()]+" "+ds(jE.d):"—",J.length+" أقساط")+
+  card("المتبقي من السلفة",n(S.lp-lp.pd)+" د.ل",(L.length-lc)+" قسطًا متبقيًا")+
+  card("المتبقي من الجمعية",n(S.jt-jp.pd)+" د.ل",(J.length-J.filter(paid).length)+" أقساط متبقية")+
+  (nxL?card("الخصم القادم",ds(nxL.d),"سلفة "+n(nxL.pay)+((nxJ&&nxJ.d.getTime()==nxL.d.getTime())?" + جمعية "+n(nxJ.pay):"")+" د.ل"):"")+
+  lp.html+jp.html;
+ var total=L.length&&J.length?Math.max(L.length,J.length):0;
+ document.getElementById("ovnote").innerHTML='<div class="c"><div class="l">الخلاصة</div><div class="s" style="font-size:14px;color:var(--tx)">أعلى خصم شهري مشترك '+n(S.lm+S.ex+S.jm)+' د.ل (يبدأ من نوفمبر). تنتهي الجمعية قبل السلفة، وبعدها يعود الخصم إلى قسط السلفة وحده'+(saved>0?" · الدفعة الإضافية توفّر "+saved+" شهرًا.":".")+'</div></div>';
+ // السلفة
+ document.getElementById("lhero").innerHTML=card("أصل السلفة",n(S.lp)+" د.ل","المنطقة الحرة")+card("القسط الشهري",n(S.lm+S.ex)+" د.ل",S.ex?"يشمل إضافة "+n(S.ex):"")+card("عدد الأقساط",L.length,"المنتهي: "+lc)+card("تاريخ الانتهاء",lE?ds(lE.d):"—",lE?WD[lE.d.getDay()]:"");
+ var h='<tr><th>#</th><th>تاريخ الخصم</th><th>اليوم</th><th>القسط</th><th>المتبقي</th><th>الحالة</th><th>أحداث</th></tr>';
+ L.forEach(function(x,i){var ev=EV[key(x.y,x.m)],cls=ev?"ev":"";if(nxL===x)cls="nx";
+  h+='<tr class="'+(ev?"ev":"")+(nxL===x?" nx":"")+'"><td>'+(i+1)+'</td><td>'+ds(x.d)+'</td><td>'+WD[x.d.getDay()]+'</td><td>'+n(x.pay)+'</td><td>'+n(x.rem)+'</td><td><span class="st'+(paid(x)?" p":"")+'">'+(paid(x)?"منتهي":nxL===x?"القادم":"قادم")+'</span></td><td>'+evs(x.y,x.m)+'</td></tr>';});
+ document.getElementById("lt").innerHTML=h;
+ // الجمعية
+ document.getElementById("jhero").innerHTML=card("قيمة الجمعية",n(S.jt)+" د.ل","المخزن")+card("القسط الشهري",n(S.jm)+" د.ل","")+card("عدد الأقساط",J.length,"أول خصم "+(J[0]?ds(J[0].d):"—"))+card("تاريخ الانتهاء",jE?ds(jE.d):"—",jE?WD[jE.d.getDay()]:"");
+ h='<tr><th>#</th><th>تاريخ الخصم</th><th>اليوم</th><th>القسط</th><th>المتبقي</th><th>الحالة</th><th>أحداث</th></tr>';
+ J.forEach(function(x,i){h+='<tr class="'+(EV[key(x.y,x.m)]?"ev":"")+(nxJ===x?" nx":"")+'"><td>'+(i+1)+'</td><td>'+ds(x.d)+'</td><td>'+WD[x.d.getDay()]+'</td><td>'+n(x.pay)+'</td><td>'+n(x.rem)+'</td><td><span class="st'+(paid(x)?" p":"")+'">'+(paid(x)?"منتهي":nxJ===x?"القادم":"قادم")+'</span></td><td>'+evs(x.y,x.m)+'</td></tr>';});
+ document.getElementById("jt").innerHTML=h;
+ // المدمج
+ var M={};L.forEach(function(x){M[key(x.y,x.m)]=M[key(x.y,x.m)]||{x:x};M[key(x.y,x.m)].l=x;});
+ J.forEach(function(x){M[key(x.y,x.m)]=M[key(x.y,x.m)]||{x:x};M[key(x.y,x.m)].j=x;});
+ var ks=Object.keys(M).sort(function(a,b){return M[a].x.d-M[b].x.d;});
+ h='<tr><th>الشهر</th><th>الحالة</th><th>سلفة</th><th>جمعية</th><th>إجمالي الخصم</th><th>متبقي السلفة</th><th>متبقي الجمعية</th><th>أحداث</th></tr>';
+ ks.forEach(function(k){var o=M[k],a=o.l?o.l.pay:0,b=o.j?o.j.pay:0,x=o.x;
+  h+='<tr class="'+(EV[k]?"ev":"")+'"><td>'+ds(x.d)+'</td><td><span class="st'+(paid(x)?' p':'')+'">'+(paid(x)?'منتهي':'قادم')+'</span></td><td>'+(a?n(a):"—")+'</td><td>'+(b?n(b):"—")+'</td><td><b>'+n(a+b)+'</b></td><td>'+(o.l?n(o.l.rem):"0")+'</td><td>'+(o.j?n(o.j.rem):"0")+'</td><td>'+evs(x.y,x.m)+'</td></tr>';});
+ document.getElementById("ct").innerHTML=h;
+}
+var FL=[["lp","أصل السلفة (د.ل)","number"],["lm","قسط السلفة الشهري","number"],["ls","تاريخ أول خصم للسلفة","date"],["ex","دفعة إضافية شهرية للسلفة","number"],["jt","قيمة جمعية المخزن","number"],["jm","قسط الجمعية الشهري","number"],["js","تاريخ أول خصم للجمعية","date"]];
+function buildSet(){document.getElementById("set").innerHTML=FL.map(function(f){return '<label>'+f[1]+'<input type="'+f[2]+'" data-k="'+f[0]+'" value="'+S[f[0]]+'"></label>';}).join("");
+ document.querySelectorAll("#set input").forEach(function(i){i.addEventListener("input",function(){var k=i.dataset.k;S[k]=i.type=="number"?(parseFloat(i.value)||0):i.value;save();render();});});}
+function resetAll(){S=Object.assign({},DEF);save();buildSet();render();}
+var TN=["نظرة عامة","السلفة","جمعية المخزن","الجدول المدمج","الإعدادات"];
+function tab(i){TN.forEach(function(_,j){document.getElementById("s"+j).classList.toggle("on",i==j);});
+ document.querySelectorAll("#tabs button").forEach(function(b,j){b.classList.toggle("on",i==j);});}
+document.getElementById("tabs").innerHTML=TN.map(function(t,i){return '<button onclick="tab('+i+')">'+t+'</button>';}).join("");
+buildSet();render();tab(0);
+</script>
+</body>
+</html>
